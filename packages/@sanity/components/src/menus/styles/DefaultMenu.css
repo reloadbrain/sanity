@@ -9,6 +9,7 @@
   text-align: left;
   overflow: auto;
   overflow-x: hidden;
+  border: 5px solid red;
 }
 
 .list {
@@ -31,6 +32,7 @@
 
 .focusedItem {
   composes: item;
+  composes: selected from 'part:@sanity/base/theme/layout/selectable-style';
 }
 
 .iconContainer {
