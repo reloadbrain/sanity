@@ -20,6 +20,18 @@
   }
 }
 
+.list {
+  display: block;
+}
+
+.listItem {
+  composes: item from 'part:@sanity/base/theme/layout/selectable-style';
+}
+
+.list .listItem {
+  padding: 0.5em;
+}
+
 .menu {
   width: 100%;
 }
