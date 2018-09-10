@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import PropTypes from 'prop-types'
 import React from 'react'
 import styles from 'part:@sanity/components/menus/default-style'
@@ -6,14 +5,14 @@ import Ink from 'react-ink'
 import enhanceWithClickOutside from 'react-click-outside'
 import classNames from 'classnames'
 
-class DefaultMenu extends React.PureComponent {
+class DefaultMenu extends React.Component {
   static propTypes = {
     onAction: PropTypes.func.isRequired,
+    isOpen: PropTypes.bool,
     ripple: PropTypes.bool,
     className: PropTypes.string,
     onClickOutside: PropTypes.func,
     onClose: PropTypes.func,
-    renderItem: PropTypes.func,
     items: PropTypes.arrayOf(
       PropTypes.shape({
         title: PropTypes.node.isRequired,
@@ -26,69 +25,65 @@ class DefaultMenu extends React.PureComponent {
   scrollOffset = 0
 
   static defaultProps = {
+    menuOpened: false,
+    isOpen: false,
+    fullWidth: false,
+    icon: false,
     ripple: true,
     onClickOutside() {},
-    onClose() {},
-    renderItem(item, index) {
-      const Icon = item.icon
-      return (
-        <div className={item.danger ? styles.dangerLink : styles.link}>
-          {Icon && (
-            <span className={styles.iconContainer}>
-              <Icon className={styles.icon} />
-            </span>
-          )}
-          {item.title}
-          {!item.isDisabled && <Ink duration={200} opacity={0.1} radius={200} />}
-        </div>
-      )
+    onClose() {}
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      focusedItem: null
     }
   }
 
-  state = {
-    focusedItem: this.props.items[0]
-  }
-
   handleClickOutside = event => {
-    this.props.onClickOutside(event)
+    if (this.props.isOpen) {
+      this.props.onClickOutside(event)
+    }
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown, false)
     window.addEventListener('resize', this.handleResize, false)
-    this.handleFocus()
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown, false)
     window.removeEventListener('resize', this.handleResize, false)
+    window.removeEventListener('keydown', this.handleKeyDown, false)
   }
 
   handleKeyDown = event => {
     const {items} = this.props
-    const {focusedItem} = this.state
-    const currentIndex = items.indexOf(focusedItem) || 0
+    const {selectedItem} = this.state
+    const currentIndex = items.indexOf(selectedItem) || 0
 
-    if (event.key == 'Escape') {
+    const isOpen = this.props.isOpen || this.props.opened // eslint-disable-line
+
+    if (event.key == 'Escape' && isOpen) {
       this.props.onClose()
     }
 
-    if (event.key == 'ArrowDown' && currentIndex < items.length - 1) {
+    if (event.key == 'ArrowDown' && isOpen && currentIndex < items.length - 1) {
       this.setState({
         focusedItem: this.props.items[currentIndex + 1]
       })
     }
 
-    if (event.key == 'ArrowUp' && currentIndex > 0) {
+    if (event.key == 'ArrowUp' && isOpen && currentIndex > 0) {
       this.setState({
         focusedItem: this.props.items[currentIndex - 1]
       })
     }
 
-    if (event.key == 'Enter' && this.state.selectedItem) {
+    if (event.key == 'Enter' && isOpen && this.state.selectedItem) {
       this.props.onAction(this.props.items[currentIndex])
     }
-    event.preventDefault() // disables scroll on arrows
   }
 
   handleItemClick = event => {
@@ -97,16 +92,15 @@ class DefaultMenu extends React.PureComponent {
   }
 
   handleFocus = event => {
-    const index = event && event.target.getAttribute('data-action-id')
+    const index = event.target.getAttribute('data-action-id')
     this.setState({
-      focusedItem: this.props.items[index || 0]
+      focusedItem: this.props.items[index]
     })
   }
 
   handleKeyPress = event => {
     const index = event.target.getAttribute('data-action-id')
     if (event.key === 'Enter') {
-      console.log('Enter')
       this.props.onAction(this.props.items[index])
     }
   }
@@ -117,26 +111,43 @@ class DefaultMenu extends React.PureComponent {
 
   render() {
     const {focusedItem} = this.state
-    const {items, renderItem, className} = this.props
+    const {items, ripple, className, opened} = this.props
+
+    const isOpen = opened || this.props.isOpen
+
     return (
-      <div ref={this.setRootElement} className={`${styles.root} ${className || ''}`}>
+      <div
+        ref={this.setRootElement}
+        className={`${isOpen ? styles.isOpen : styles.closed} ${className || ''}`}
+      >
         <ul className={styles.list}>
           {items.map((item, i) => {
+            const Icon = item.icon
             return (
               <li
                 key={i}
-                onClick={item.isDisabled ? null : this.handleItemClick}
-                data-action-id={i}
-                onFocus={this.handleFocus}
-                tabIndex="0"
-                onKeyPress={this.handleKeyPress}
                 className={classNames([
                   item === focusedItem ? styles.focusedItem : styles.item,
                   item.isDisabled && styles.isDisabled,
                   item.divider && styles.divider
                 ])}
               >
-                {renderItem(item, i)}
+                <a
+                  onClick={item.isDisabled ? null : this.handleItemClick}
+                  data-action-id={i}
+                  className={item.danger ? styles.dangerLink : styles.link}
+                  onFocus={this.handleFocus}
+                  tabIndex="0"
+                  onKeyPress={this.handleKeyPress}
+                >
+                  {Icon && (
+                    <span className={styles.iconContainer}>
+                      <Icon className={styles.icon} />
+                    </span>
+                  )}
+                  {item.title}
+                  {ripple && !item.isDisabled && <Ink duration={200} opacity={0.1} radius={200} />}
+                </a>
               </li>
             )
           })}

@@ -557,19 +557,16 @@ export default withRouterHOC(
 
     renderMenu = () => {
       const {draft, published} = this.props
-      const {isMenuOpen} = this.state
-      if (isMenuOpen) {
-        return (
-          <Menu
-            onAction={this.handleMenuClick}
-            onClose={this.handleMenuClose}
-            onClickOutside={this.handleMenuClose}
-            items={getMenuItems(draft, published, this.isLiveEditEnabled())}
-            origin="top-right"
-          />
-        )
-      }
-      return true
+      return (
+        <Menu
+          onAction={this.handleMenuClick}
+          isOpen={this.state.isMenuOpen}
+          onClose={this.handleMenuClose}
+          onClickOutside={this.handleMenuClose}
+          items={getMenuItems(draft, published, this.isLiveEditEnabled())}
+          origin="top-right"
+        />
+      )
     }
 
     render() {
