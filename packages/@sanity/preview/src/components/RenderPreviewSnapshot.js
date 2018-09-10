@@ -25,7 +25,7 @@ export default function RenderPreviewSnapshot(props) {
 
   const preview = (
     <PreviewComponent
-      // Render media always until we have schema functionality for determing if there is media
+      // Render media always until we have schema functionality for determining if there is media
       media={() => undefined}
       {...rest}
       value={snapshot}
