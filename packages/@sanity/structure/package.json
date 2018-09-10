@@ -48,6 +48,7 @@
   "homepage": "https://www.sanity.io/",
   "jest": {
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js|ts)$",
+    "testURL": "http://localhost",
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
