@@ -59,6 +59,8 @@ export default class DropDownButton extends React.PureComponent {
       menuOpened: true,
       width: event.target.offsetWidth
     })
+    // Checks if the onClick comes from pressing the keyboard
+    this.keyboardNavigation = event.detail == 0
   }
 
   handleButtonBlur = event => {
