@@ -222,15 +222,42 @@ storiesOf('Buttons', module)
   .add('DropDownButton', () => {
     return (
       <Sanity part="part:@sanity/components/buttons/dropdown" propTables={[DropDownButton]}>
-        <div>
-          <DropDownButton
-            items={object('prop: items', items)}
-            onAction={action('Clicked item')}
-            color={getColorKinds()}
-            kind={getButtonKinds()}
-          >
-            {text('prop: children', 'This is a dropdown')}
-          </DropDownButton>
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+            width: '100%',
+            height: '100bh',
+            boxSizing: 'border-box'
+          }}
+        >
+          <div>
+            <DropDownButton
+              items={object('prop: items', items)}
+              onAction={action('Clicked item')}
+              color={getColorKinds()}
+              kind={getButtonKinds()}
+            >
+              {text('prop: children', 'This is a dropdown')}
+            </DropDownButton>
+          </div>
+          <br />
+          <div>
+            <DropDownButton
+              items={[
+                {index: '1', title: 'Test with long title'},
+                {index: '2', title: 'Test 2 with longer title'}
+              ]}
+              onAction={action('Clicked item')}
+              color={getColorKinds()}
+              kind={getButtonKinds()}
+            >
+              {text('prop: children', 'Short')}
+            </DropDownButton>
+          </div>
           <div>This text should be under the menu</div>
         </div>
       </Sanity>

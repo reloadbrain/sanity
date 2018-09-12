@@ -26,14 +26,11 @@
 
 .listItem {
   composes: item from 'part:@sanity/base/theme/layout/selectable-style';
+  white-space: pre;
 }
 
 .list .listItem {
   padding: 0.5em;
-}
-
-.menu {
-  width: 100%;
 }
 
 .popper {
