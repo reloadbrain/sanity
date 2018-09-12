@@ -62,7 +62,6 @@ export default class DropDownButton extends React.PureComponent {
   }
 
   handleButtonBlur = event => {
-    // console.log('buttonBlur')
     if (this.state.menuOpened && !this.menuHasKeybaordFocus && this.keyboardNavigation) {
       this.handleClose()
     }
